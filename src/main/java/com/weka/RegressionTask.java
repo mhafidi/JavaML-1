@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Random;
 
 import weka.classifiers.Evaluation;
-import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.functions.*;
 import weka.classifiers.trees.M5P;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
@@ -19,7 +19,8 @@ public class RegressionTask {
 		 */
 		CSVLoader loader = new CSVLoader();
 		loader.setFieldSeparator(",");
-		loader.setSource(new File("data/ENB2012_data.csv"));
+			File file = new File("src/main/resources/data/ENB2012_data.csv");
+			loader.setSource(file);
 		Instances data = loader.getDataSet();
 
 		// System.out.println(data);
@@ -36,7 +37,18 @@ public class RegressionTask {
 		data = Filter.useFilter(data, remove);
 
 		// build a regression model
-		LinearRegression model = new LinearRegression();
+			ClassLoader classLoader = RegressionTask.class.getClassLoader();
+			Class aClass = null;
+			try {
+				 aClass = classLoader.loadClass("weka.classifiers.functions.LinearRegression");
+				System.out.println("aClass.getName() = " + aClass.getName());
+				
+			} catch (ClassNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+		LinearRegression model=(LinearRegression) aClass.newInstance();
+		//LinearRegression model = new LinearRegression();
 		model.buildClassifier(data);
 		System.out.println(model);
 
